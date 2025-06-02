@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:strezzlah/Pages/dass21_flutter_app.dart';
 import 'package:strezzlah/screen/intro_screen.dart';
 import 'package:strezzlah/Pages/login_page.dart';
 import 'package:strezzlah/Pages/signup_page.dart';
 
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   const apiBaseUrl = 'http://localhost:52158'; // Updated port number
   runApp(DASS21AnalyzerApp(apiBaseUrl: apiBaseUrl));
 }
