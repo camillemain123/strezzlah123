@@ -71,31 +71,32 @@ def get_severity_level(score, category):
 class StressClassifier:
     def __init__(self):
         self.model = None
+        self.scaler = None
         self.model_path = os.path.join(os.path.dirname(__file__), '..', 'ml_model', 'stress_classifier.joblib')
+        self.scaler_path = os.path.join(os.path.dirname(__file__), '..', 'ml_model', 'scaler.joblib')
         self.load_model()
 
     def load_model(self):
-        """Load the trained model if it exists"""
-        if os.path.exists(self.model_path):
+        """Load the trained model and scaler if they exist"""
+        try:
             self.model = joblib.load(self.model_path)
-        else:
+            self.scaler = joblib.load(self.scaler_path)
+        except:
+            print("Model or scaler not found. Please train the model first.")
             self.model = RandomForestClassifier(n_estimators=100, random_state=42)
+            self.scaler = None
 
-    def train(self, X, y):
-        """Train the model with new data"""
-        self.model.fit(X, y)
-        os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
-        joblib.dump(self.model, self.model_path)
-
-    def predict(self, X):
-        """Make predictions using the model"""
-        if self.model is None:
+    def predict(self, features):
+        """Make predictions using the model. Expects a list of 20 feature values in the same order as the training data."""
+        if self.model is None or self.scaler is None:
             return None
-        return self.model.predict(X)
+        X = np.array([features])
+        X_scaled = self.scaler.transform(X)
+        return self.model.predict(X_scaled)[0]
 
-    def get_feedback(self, depression_score, anxiety_score, stress_score):
+    def get_feedback(self, depression_score, anxiety_score, stress_score, prediction=None):
         """
-        Generate personalized feedback based on scores
+        Generate personalized feedback based on scores and ML prediction.
         """
         feedback = []
         
@@ -116,6 +117,13 @@ class StressClassifier:
             feedback.append("Implement stress management techniques like progressive muscle relaxation.")
         elif stress_score >= STRESS_THRESHOLDS['mild']:
             feedback.append("Try to maintain a healthy work-life balance and take regular breaks.")
+        
+        # ML prediction feedback
+        if prediction is not None:
+            if prediction >= 2:
+                feedback.append("Based on your additional factors, consider seeking professional help to address your stress levels.")
+            else:
+                feedback.append("Your additional factors suggest you are managing stress well. Keep up the good habits!")
         
         # General recommendations
         feedback.append("Remember to stay hydrated and maintain a balanced diet.")

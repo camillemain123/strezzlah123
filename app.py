@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 from utils.dass_utils import calculate_scores, get_severity_level, StressClassifier
+import joblib
 
 # Load environment variables
 load_dotenv()
@@ -22,6 +23,19 @@ login_manager.login_view = 'login'
 
 # Initialize stress classifier
 stress_classifier = StressClassifier()
+
+# Load the trained model, scaler, and label encoder
+model_path = os.path.join(os.path.dirname(__file__), 'ml_model', 'stress_classifier.joblib')
+scaler_path = os.path.join(os.path.dirname(__file__), 'ml_model', 'scaler.joblib')
+label_encoder_path = os.path.join(os.path.dirname(__file__), 'ml_model', 'label_encoder.joblib')
+
+if os.path.exists(model_path) and os.path.exists(scaler_path):
+    stress_classifier.model = joblib.load(model_path)
+    stress_classifier.scaler = joblib.load(scaler_path)
+    if os.path.exists(label_encoder_path):
+        stress_classifier.label_encoder = joblib.load(label_encoder_path)
+else:
+    print("Model or scaler not found. Please train the model first.")
 
 # Database Models
 class User(UserMixin, db.Model):
@@ -123,27 +137,61 @@ def submit_assessment():
             flash('Please answer all questions')
             return redirect(url_for('new_assessment'))
         responses.append(int(response))
-    
+
     # Calculate scores
     depression_score, anxiety_score, stress_score = calculate_scores(responses)
-    
-    # Get AI feedback
     feedback = stress_classifier.get_feedback(depression_score, anxiety_score, stress_score)
-    
-    # Save assessment
-    assessment = Assessment(
-        user_id=current_user.id,
-        date=datetime.now(),
-        depression_score=depression_score,
-        anxiety_score=anxiety_score,
-        stress_score=stress_score,
-        feedback=feedback
-    )
-    db.session.add(assessment)
-    db.session.commit()
-    
-    flash('Assessment completed successfully!')
-    return redirect(url_for('dashboard'))
+
+    # Temporarily store DASS-21 results in session
+    from flask import session
+    session['dass21_scores'] = {
+        'depression_score': depression_score,
+        'anxiety_score': anxiety_score,
+        'stress_score': stress_score,
+        'feedback': feedback
+    }
+    # Redirect to 20-feature form
+    return redirect(url_for('feature_form'))
+
+@app.route('/assessment/features', methods=['GET', 'POST'])
+@login_required
+def feature_form():
+    from flask import session
+    # List of 20 feature names in order (from StressLevelDataset.csv)
+    feature_names = [
+        'anxiety_level', 'self_esteem', 'mental_health_history', 'depression', 'headache', 'blood_pressure',
+        'sleep_quality', 'breathing_problem', 'noise_level', 'living_conditions', 'safety', 'basic_needs',
+        'academic_performance', 'study_load', 'teacher_student_relationship', 'future_career_concerns',
+        'social_support', 'peer_pressure', 'extracurricular_activities', 'bullying'
+    ]
+    if request.method == 'POST':
+        features = []
+        for name in feature_names:
+            value = request.form.get(name)
+            if value is None or value == '':
+                flash('Please fill out all fields')
+                return render_template('feature_form.html', feature_names=feature_names)
+            features.append(float(value))
+        # Make prediction using the trained model
+        prediction = stress_classifier.predict(features)
+        # Retrieve DASS-21 results from session
+        dass21 = session.pop('dass21_scores', None)
+        # Save assessment (DASS-21 scores and feedback)
+        if dass21:
+            feedback = stress_classifier.get_feedback(dass21['depression_score'], dass21['anxiety_score'], dass21['stress_score'], prediction)
+            assessment = Assessment(
+                user_id=current_user.id,
+                date=datetime.now(),
+                depression_score=dass21['depression_score'],
+                anxiety_score=dass21['anxiety_score'],
+                stress_score=dass21['stress_score'],
+                feedback=feedback
+            )
+            db.session.add(assessment)
+            db.session.commit()
+        flash(f'Assessment completed! ML Prediction: {prediction}')
+        return redirect(url_for('dashboard'))
+    return render_template('feature_form.html', feature_names=feature_names)
 
 @app.route('/logout')
 @login_required

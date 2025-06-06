@@ -1,72 +1,241 @@
 {% extends "base.html" %}
 
-{% block title %}DASS-21 Assessment{% endblock %}
+{% block title %}Stress Assessment{% endblock %}
+
+{% block extra_css %}
+<style>
+    .question-card {
+        display: none;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .question-card.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .progress {
+        height: 10px;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+    }
+
+    .progress-bar {
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
+    }
+
+    .rating-scale {
+        display: flex;
+        justify-content: space-between;
+        margin: 1rem 0;
+        padding: 0 1rem;
+    }
+
+    .rating-option {
+        text-align: center;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .rating-option:hover {
+        background-color: var(--secondary-color);
+    }
+
+    .rating-option.selected {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .rating-option input {
+        display: none;
+    }
+
+    .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+
+    .question-number {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        opacity: 0.7;
+    }
+
+    .question-text {
+        font-size: 1.2rem;
+        margin: 1rem 0;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8 offset-md-2">
+<div class="row justify-content-center">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-body">
-                <h2 class="card-title text-center mb-4">DASS-21 Assessment</h2>
-                <p class="text-muted text-center mb-4">
-                    Please read each statement and choose the option that indicates how much the statement applied to you over the past week.
-                </p>
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-clipboard-list me-2"></i>Stress Assessment
+                </h2>
+                
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
 
-                <form method="POST" action="{{ url_for('submit_assessment') }}" id="dassForm">
-                    <div class="questions">
-                        {% set questions = [
-                            "I found it hard to wind down",
-                            "I was aware of dryness of my mouth",
-                            "I couldn't seem to experience any positive feeling at all",
-                            "I experienced breathing difficulty",
-                            "I found it difficult to work up the initiative to do things",
-                            "I tended to over-react to situations",
-                            "I experienced trembling",
-                            "I felt that I was using a lot of nervous energy",
-                            "I was worried about situations in which I might panic and make a fool of myself",
-                            "I felt that I had nothing to look forward to",
-                            "I found myself getting agitated",
-                            "I found it difficult to relax",
-                            "I felt down-hearted and blue",
-                            "I was intolerant of anything that kept me from getting on with what I was doing",
-                            "I felt I was close to panic",
-                            "I was unable to become enthusiastic about anything",
-                            "I felt I wasn't worth much as a person",
-                            "I felt that I was rather touchy",
-                            "I was aware of the action of my heart in the absence of physical exertion",
-                            "I felt scared without any good reason",
-                            "I felt that life was meaningless"
-                        ] %}
-
-                        {% for question in questions %}
-                        <div class="question mb-4">
-                            <p class="mb-2"><strong>{{ loop.index }}. {{ question }}</strong></p>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="q{{ loop.index }}" id="q{{ loop.index }}_0" value="0" required>
-                                <label class="form-check-label" for="q{{ loop.index }}_0">Did not apply to me at all</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="q{{ loop.index }}" id="q{{ loop.index }}_1" value="1" required>
-                                <label class="form-check-label" for="q{{ loop.index }}_1">Applied to me to some degree, or some of the time</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="q{{ loop.index }}" id="q{{ loop.index }}_2" value="2" required>
-                                <label class="form-check-label" for="q{{ loop.index }}_2">Applied to me to a considerable degree, or a good part of time</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="q{{ loop.index }}" id="q{{ loop.index }}_3" value="3" required>
-                                <label class="form-check-label" for="q{{ loop.index }}_3">Applied to me very much, or most of the time</label>
-                            </div>
+                <form id="assessmentForm" method="POST" action="{{ url_for('submit_assessment') }}">
+                    {% for i in range(1, 22) %}
+                    <div class="question-card" id="question{{ i }}">
+                        <div class="question-number">Question {{ i }} of 21</div>
+                        <div class="question-text">
+                            {% if i == 1 %}
+                                I found it hard to wind down
+                            {% elif i == 2 %}
+                                I was aware of dryness of my mouth
+                            {% elif i == 3 %}
+                                I couldn't seem to experience any positive feeling at all
+                            {% elif i == 4 %}
+                                I experienced breathing difficulty
+                            {% elif i == 5 %}
+                                I found it difficult to work up the initiative to do things
+                            {% elif i == 6 %}
+                                I tended to over-react to situations
+                            {% elif i == 7 %}
+                                I experienced trembling (e.g., in the hands)
+                            {% elif i == 8 %}
+                                I felt that I was using a lot of nervous energy
+                            {% elif i == 9 %}
+                                I was worried about situations in which I might panic and make a fool of myself
+                            {% elif i == 10 %}
+                                I felt that I had nothing to look forward to
+                            {% elif i == 11 %}
+                                I found myself getting agitated
+                            {% elif i == 12 %}
+                                I found it difficult to relax
+                            {% elif i == 13 %}
+                                I felt down-hearted and blue
+                            {% elif i == 14 %}
+                                I was intolerant of anything that kept me from getting on with what I was doing
+                            {% elif i == 15 %}
+                                I felt I was close to panic
+                            {% elif i == 16 %}
+                                I was unable to become enthusiastic about anything
+                            {% elif i == 17 %}
+                                I felt I wasn't worth much as a person
+                            {% elif i == 18 %}
+                                I felt that I was rather touchy
+                            {% elif i == 19 %}
+                                I was aware of the action of my heart in the absence of physical exertion
+                            {% elif i == 20 %}
+                                I felt scared without any good reason
+                            {% elif i == 21 %}
+                                I felt that life was meaningless
+                            {% endif %}
                         </div>
-                        {% endfor %}
-                    </div>
+                        
+                        <div class="rating-scale">
+                            <label class="rating-option">
+                                <input type="radio" name="q{{ i }}" value="0" required>
+                                <div>Never</div>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="q{{ i }}" value="1" required>
+                                <div>Sometimes</div>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="q{{ i }}" value="2" required>
+                                <div>Often</div>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="q{{ i }}" value="3" required>
+                                <div>Almost Always</div>
+                            </label>
+                        </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">Submit Assessment</button>
+                        <div class="navigation-buttons">
+                            <button type="button" class="btn btn-outline-primary" onclick="previousQuestion()" {% if i == 1 %}disabled{% endif %}>
+                                <i class="fas fa-arrow-left me-1"></i>Previous
+                            </button>
+                            {% if i == 21 %}
+                                <button type="submit" class="btn btn-primary">
+                                    Submit <i class="fas fa-paper-plane ms-1"></i>
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-primary" onclick="nextQuestion()">
+                                    Next <i class="fas fa-arrow-right ms-1"></i>
+                                </button>
+                            {% endif %}
+                        </div>
                     </div>
+                    {% endfor %}
                 </form>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentQuestion = 1;
+const totalQuestions = 21;
+
+function showQuestion(number) {
+    document.querySelectorAll('.question-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    document.getElementById(`question${number}`).classList.add('active');
+    
+    // Update progress bar
+    const progress = (number / totalQuestions) * 100;
+    document.querySelector('.progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+    if (currentQuestion < totalQuestions) {
+        currentQuestion++;
+        showQuestion(currentQuestion);
+    }
+}
+
+function previousQuestion() {
+    if (currentQuestion > 1) {
+        currentQuestion--;
+        showQuestion(currentQuestion);
+    }
+}
+
+// Initialize rating options
+document.querySelectorAll('.rating-option').forEach(option => {
+    option.addEventListener('click', function() {
+        // Remove selected class from siblings
+        this.parentElement.querySelectorAll('.rating-option').forEach(sib => {
+            sib.classList.remove('selected');
+        });
+        // Add selected class to clicked option
+        this.classList.add('selected');
+        // Trigger radio button click
+        this.querySelector('input').click();
+    });
+});
+
+// Show first question on load
+document.addEventListener('DOMContentLoaded', function() {
+    showQuestion(1);
+});
+
+// Form validation
+document.getElementById('assessmentForm').addEventListener('submit', function(e) {
+    const unanswered = document.querySelectorAll('input[type="radio"]:checked').length;
+    if (unanswered < totalQuestions) {
+        e.preventDefault();
+        alert('Please answer all questions before submitting.');
+    }
+});
+</script>
 {% endblock %} 

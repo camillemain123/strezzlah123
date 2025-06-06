@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Strezzlah - Additional Assessment Features{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h2 class="mb-4 text-center">Strezzlah - Additional Assessment Features</h2>
+            <p class="mb-4 text-center">Please rate each of the following factors on a scale from 0 to 5, where 0 means 'Not at all' and 5 means 'Extremely'.</p>
+            <form method="POST" id="featureForm">
+                {% for name in feature_names %}
+                <div class="mb-4">
+                    <label class="form-label text-capitalize">{{ name.replace('_', ' ') }}</label>
+                    <div class="d-flex justify-content-between">
+                        {% for i in range(6) %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="{{ name }}" id="{{ name }}_{{ i }}" value="{{ i }}" required>
+                            <label class="form-check-label" for="{{ name }}_{{ i }}">{{ i }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary w-100">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+// Optionally, add client-side validation or enhancements here
+</script>
+{% endblock %} 

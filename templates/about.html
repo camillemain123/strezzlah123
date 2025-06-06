@@ -1,0 +1,711 @@
+{% extends "base.html" %}
+
+{% block title %}About DASS-21{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-section {
+        padding: 2rem 0;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .importance-section {
+        background-color: var(--secondary-color);
+        padding: 3rem 0;
+        margin: 2rem 0;
+        border-radius: 15px;
+    }
+
+    .severity-table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .severity-table th {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .student-benefits {
+        background: linear-gradient(135deg, var(--primary-color), #2ecc71);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin: 2rem 0;
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .benefit-icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+
+    .cta-section {
+        text-align: center;
+        padding: 3rem 0;
+    }
+
+    .cta-button {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin-top: 1rem;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        color: white;
+    }
+
+    .coping-strategies {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .strategy-card {
+        border-left: 4px solid var(--primary-color);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: var(--secondary-color);
+        border-radius: 0 10px 10px 0;
+    }
+
+    .academic-impact {
+        background: linear-gradient(135deg, #2ecc71, var(--primary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin: 2rem 0;
+    }
+
+    .impact-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    .faq-section {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .faq-item {
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+    }
+
+    .faq-question {
+        font-weight: 600;
+        color: var(--primary-color);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .faq-answer {
+        display: none;
+        padding: 1rem 0;
+        color: #666;
+    }
+
+    .faq-answer.active {
+        display: block;
+    }
+
+    .testimonial-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .testimonial-text {
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    .testimonial-author {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .campus-resources {
+        background: linear-gradient(135deg, #6c5ce7, var(--primary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin: 2rem 0;
+    }
+
+    .resource-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .long-term-benefits {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .benefit-timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .benefit-timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-left: 2rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        background: var(--primary-color);
+        border-radius: 50%;
+    }
+
+    .advanced-strategies {
+        background: var(--secondary-color);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+
+    .strategy-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .strategy-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .strategy-item h5 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .emergency-resources {
+        background: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+
+    .emergency-resources h4 {
+        color: #856404;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 mb-4">
+                    <i class="fas fa-brain me-2"></i>Understanding DASS-21
+                </h1>
+                <p class="lead">
+                    The Depression, Anxiety, and Stress Scale (DASS-21) is a scientifically validated psychological assessment tool that helps identify and measure emotional states.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Comprehensive Assessment</h3>
+                    <p>DASS-21 evaluates three key emotional states: depression, anxiety, and stress, providing a complete picture of mental well-being.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Scientific Validation</h3>
+                    <p>Extensively researched and validated across different populations, making it a reliable tool for mental health assessment.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Quick & Efficient</h3>
+                    <p>Takes only 5-10 minutes to complete, making it practical for regular monitoring of mental well-being.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="importance-section">
+            <div class="container">
+                <h2 class="text-center mb-4">Why DASS-21 Matters for Students</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="student-benefits">
+                            <h3 class="mb-4">Key Benefits for Students</h3>
+                            <div class="benefit-item">
+                                <i class="fas fa-graduation-cap benefit-icon"></i>
+                                <div>Early detection of academic stress and burnout</div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-book benefit-icon"></i>
+                                <div>Improved academic performance through better mental health</div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-users benefit-icon"></i>
+                                <div>Better social relationships and campus life</div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-heart benefit-icon"></i>
+                                <div>Enhanced overall well-being and life satisfaction</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="mb-4">Common Student Challenges</h3>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <i class="fas fa-exclamation-circle text-primary me-2"></i>
+                                Academic pressure and deadlines
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-exclamation-circle text-primary me-2"></i>
+                                Financial concerns and student loans
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-exclamation-circle text-primary me-2"></i>
+                                Social adjustment and peer pressure
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-exclamation-circle text-primary me-2"></i>
+                                Future career uncertainty
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-exclamation-circle text-primary me-2"></i>
+                                Work-study-life balance
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="text-center mb-4">Understanding Severity Levels</h3>
+                <div class="severity-table">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Severity</th>
+                                <th>Depression</th>
+                                <th>Anxiety</th>
+                                <th>Stress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Normal</td>
+                                <td>0-9</td>
+                                <td>0-7</td>
+                                <td>0-14</td>
+                            </tr>
+                            <tr>
+                                <td>Mild</td>
+                                <td>10-13</td>
+                                <td>8-9</td>
+                                <td>15-18</td>
+                            </tr>
+                            <tr>
+                                <td>Moderate</td>
+                                <td>14-20</td>
+                                <td>10-14</td>
+                                <td>19-25</td>
+                            </tr>
+                            <tr>
+                                <td>Severe</td>
+                                <td>21-27</td>
+                                <td>15-19</td>
+                                <td>26-33</td>
+                            </tr>
+                            <tr>
+                                <td>Extremely Severe</td>
+                                <td>28+</td>
+                                <td>20+</td>
+                                <td>34+</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="academic-impact">
+            <h2 class="text-center mb-4">Impact on Academic Performance</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="impact-item">
+                        <i class="fas fa-graduation-cap me-3"></i>
+                        <div>
+                            <h4>Improved Focus</h4>
+                            <p>Better mental health leads to enhanced concentration and learning ability</p>
+                        </div>
+                    </div>
+                    <div class="impact-item">
+                        <i class="fas fa-book me-3"></i>
+                        <div>
+                            <h4>Better Study Habits</h4>
+                            <p>Reduced stress helps develop more effective study routines</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="impact-item">
+                        <i class="fas fa-chart-bar me-3"></i>
+                        <div>
+                            <h4>Higher Grades</h4>
+                            <p>Students with better mental health typically achieve better academic results</p>
+                        </div>
+                    </div>
+                    <div class="impact-item">
+                        <i class="fas fa-users me-3"></i>
+                        <div>
+                            <h4>Enhanced Participation</h4>
+                            <p>Improved confidence leads to better class participation and group work</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coping-strategies">
+            <h2 class="text-center mb-4">Effective Coping Strategies for Students</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="strategy-card">
+                        <h4><i class="fas fa-clock me-2"></i>Time Management</h4>
+                        <p>Create a balanced schedule that includes study time, breaks, and self-care activities.</p>
+                    </div>
+                    <div class="strategy-card">
+                        <h4><i class="fas fa-heart me-2"></i>Self-Care</h4>
+                        <p>Regular exercise, healthy eating, and sufficient sleep are crucial for mental well-being.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="strategy-card">
+                        <h4><i class="fas fa-users me-2"></i>Social Support</h4>
+                        <p>Maintain connections with friends, family, and campus support services.</p>
+                    </div>
+                    <div class="strategy-card">
+                        <h4><i class="fas fa-brain me-2"></i>Mindfulness</h4>
+                        <p>Practice meditation and mindfulness techniques to reduce stress and anxiety.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How often should I take the DASS-21 assessment?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    It's recommended to take the assessment every 2-4 weeks to track changes in your mental well-being. However, you can take it more frequently if you're going through a particularly stressful period.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What should I do if I score high on any scale?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    If you score in the moderate to severe range, it's recommended to seek support from campus counseling services or mental health professionals. The assessment results can be a helpful starting point for discussing your concerns.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Is the DASS-21 assessment confidential?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes, all assessment results are kept strictly confidential. Only you can access your detailed results, though aggregated anonymous data may be used for research purposes.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How can I track my progress over time?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    The system automatically tracks your assessment history and provides visual graphs of your progress. You can view trends in your depression, anxiety, and stress levels over time.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What resources are available if I need immediate help?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Campus counseling services are available 24/7 for emergency support. You can also access national crisis hotlines and online resources through our emergency resources section.
+                </div>
+            </div>
+        </div>
+
+        <div class="campus-resources">
+            <h2 class="text-center mb-4">Campus Support Resources</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="resource-card">
+                        <h4><i class="fas fa-user-md me-2"></i>Counseling Services</h4>
+                        <p>Professional mental health support available on campus, including individual and group therapy sessions.</p>
+                        <ul class="mt-2">
+                            <li>Free initial consultation</li>
+                            <li>Confidential sessions</li>
+                            <li>Specialized student support</li>
+                        </ul>
+                    </div>
+                    <div class="resource-card">
+                        <h4><i class="fas fa-users me-2"></i>Peer Support Groups</h4>
+                        <p>Connect with other students facing similar challenges in a supportive environment.</p>
+                        <ul class="mt-2">
+                            <li>Weekly meetings</li>
+                            <li>Shared experiences</li>
+                            <li>Community building</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="resource-card">
+                        <h4><i class="fas fa-book me-2"></i>Academic Support</h4>
+                        <p>Resources to help manage academic stress and improve performance.</p>
+                        <ul class="mt-2">
+                            <li>Study skills workshops</li>
+                            <li>Time management training</li>
+                            <li>Academic counseling</li>
+                        </ul>
+                    </div>
+                    <div class="resource-card">
+                        <h4><i class="fas fa-heart me-2"></i>Wellness Center</h4>
+                        <p>Comprehensive wellness programs and activities.</p>
+                        <ul class="mt-2">
+                            <li>Yoga and meditation classes</li>
+                            <li>Fitness programs</li>
+                            <li>Nutrition counseling</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="long-term-benefits">
+            <h2 class="text-center mb-4">Long-term Benefits of Regular Assessment</h2>
+            <div class="benefit-timeline">
+                <div class="timeline-item">
+                    <h4>Short-term (1-3 months)</h4>
+                    <ul>
+                        <li>Better awareness of emotional patterns</li>
+                        <li>Improved stress management skills</li>
+                        <li>Enhanced academic performance</li>
+                        <li>Better sleep quality</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Medium-term (3-6 months)</h4>
+                    <ul>
+                        <li>Developed coping mechanisms</li>
+                        <li>Stronger support networks</li>
+                        <li>Improved time management</li>
+                        <li>Better work-life balance</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Long-term (6+ months)</h4>
+                    <ul>
+                        <li>Resilient mental health habits</li>
+                        <li>Enhanced career readiness</li>
+                        <li>Improved relationships</li>
+                        <li>Better overall life satisfaction</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="advanced-strategies">
+            <h2 class="text-center mb-4">Advanced Coping Strategies</h2>
+            <div class="strategy-grid">
+                <div class="strategy-item">
+                    <h5><i class="fas fa-brain me-2"></i>Cognitive Techniques</h5>
+                    <p>Learn to identify and challenge negative thought patterns through cognitive restructuring exercises.</p>
+                </div>
+                <div class="strategy-item">
+                    <h5><i class="fas fa-heartbeat me-2"></i>Physical Wellness</h5>
+                    <p>Regular exercise routines, proper nutrition, and sleep hygiene practices for optimal mental health.</p>
+                </div>
+                <div class="strategy-item">
+                    <h5><i class="fas fa-comments me-2"></i>Communication Skills</h5>
+                    <p>Develop effective communication techniques for better relationships and conflict resolution.</p>
+                </div>
+                <div class="strategy-item">
+                    <h5><i class="fas fa-tasks me-2"></i>Goal Setting</h5>
+                    <p>Learn to set realistic goals and break them down into manageable steps for better achievement.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="emergency-resources">
+            <h4><i class="fas fa-exclamation-triangle me-2"></i>Emergency Resources</h4>
+            <p>If you're experiencing a mental health emergency, please contact:</p>
+            <ul>
+                <li>Campus Crisis Line: <strong>1-800-XXX-XXXX</strong> (24/7)</li>
+                <li>National Crisis Hotline: <strong>988</strong></li>
+                <li>Campus Counseling Center: <strong>1-800-XXX-XXXX</strong></li>
+            </ul>
+            <p class="mb-0">Remember: It's okay to ask for help. These services are confidential and available 24/7.</p>
+        </div>
+
+        <div class="row mt-5">
+            <h2 class="text-center mb-4">Student Testimonials</h2>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "The DASS-21 assessment helped me understand my stress levels and take proactive steps to manage them. My grades have improved significantly since I started monitoring my mental health."
+                    </div>
+                    <div class="testimonial-author">- Sarah, 3rd Year Psychology</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "Regular assessment helped me identify patterns in my anxiety levels during exam periods. Now I can better prepare and manage my stress."
+                    </div>
+                    <div class="testimonial-author">- Michael, 2nd Year Engineering</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "The coping strategies suggested based on my assessment results have been incredibly helpful in balancing my academic and personal life."
+                    </div>
+                    <div class="testimonial-author">- Emma, 4th Year Business</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2 class="mb-4">Ready to Assess Your Mental Well-being?</h2>
+            <p class="lead mb-4">Take the DASS-21 assessment to understand your current emotional state and get personalized recommendations.</p>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('new_assessment') }}" class="cta-button">
+                    <i class="fas fa-clipboard-list me-2"></i>Start Assessment
+                </a>
+            {% else %}
+                <a href="{{ url_for('signup') }}" class="cta-button">
+                    <i class="fas fa-user-plus me-2"></i>Sign Up to Begin
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleFAQ(element) {
+    const answer = element.nextElementSibling;
+    const icon = element.querySelector('i');
+    
+    answer.classList.toggle('active');
+    icon.classList.toggle('fa-chevron-down');
+    icon.classList.toggle('fa-chevron-up');
+}
+
+// Add smooth scrolling for FAQ items
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', function() {
+        const answer = this.nextElementSibling;
+        answer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+});
+</script>
+{% endblock %} 
